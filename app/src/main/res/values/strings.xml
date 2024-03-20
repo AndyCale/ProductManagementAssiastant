@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Product Management Assiastant</string>
+    <string name="welcomeScreen">Добро пожаловать!</string>
+    <string name="scanning">Отсканировать товар</string>
+    <string name="OpenDataBase">Открыть список товаров</string>
+    <string name="back">Назад</string>
+    <string name="loading">Загрузка...</string>
+</resources>
