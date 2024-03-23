@@ -4,8 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScannerActivity"
-    android:background="@color/background">
+    tools:context=".MoveTheProductActivity">
+
+    <TextView
+        android:id="@+id/nameProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
 
     <Button
         android:id="@+id/backToMenu"
@@ -19,14 +30,5 @@
         android:layout_marginTop="15dp"
         android:layout_marginStart="15dp">
     </Button>
-
-    <androidx.camera.view.PreviewView
-        android:id="@+id/preview_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
