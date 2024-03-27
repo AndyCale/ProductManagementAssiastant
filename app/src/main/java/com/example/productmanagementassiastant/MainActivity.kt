@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.productmanagementassiastant.databinding.ActivityMainBinding
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     }
     private val cameraPermission = android.Manifest.permission.CAMERA
 
+    private var backPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,18 @@ class MainActivity : AppCompatActivity() {
 
         binding.goToScanning.setOnClickListener {
             requestCameraAndStartScanner()
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (backPressedTime + 3000 > System.currentTimeMillis()) {
+            super.onBackPressed()
+            finish()
+        }
+        else {
+            backPressedTime = System.currentTimeMillis()
+            Toast.makeText(this, "Нажмите еще раз для выхода", Toast.LENGTH_SHORT).show()
         }
     }
 
