@@ -42,6 +42,11 @@ class MainMenuActivity : AppCompatActivity() {
 
         binding.fullName.text = sp.getString("fullName", "Произошла непредвиденная ошибка")
 
+        binding.logOut.setOnClickListener {
+            sp.edit().putString("TY", "null").commit()
+            finish()
+        }
+
         binding.goToScanning.setOnClickListener {
             requestCameraAndStartScanner()
         }

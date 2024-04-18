@@ -7,11 +7,12 @@
     <string name="loading">Загрузка...</string>
     <string name="textDuringScanning">Наведите камеру на штрих или qr код</string>
 
+    <string name="fullName">ФИО</string>
     <string name="email">Электронная почта</string>
     <string name="password">Пароль</string>
 
     <string name="helloNewPeople">Введите данные нового пользователя</string>
-    <string name="fullName">ФИО</string>
+    <string name="logOut"><u>Выйти</u></string>
     <string name="signIn">Войти</string>
     <string name="signUpGo"><u>Еще не зарегистрированы?</u></string>
     <string name="signUp">Зарегистрироваться</string>
