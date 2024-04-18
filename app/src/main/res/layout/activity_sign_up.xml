@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".SignUpActivity"
     android:gravity="center_horizontal"
     android:background="@color/background">
 
@@ -13,14 +13,33 @@
         style="@style/textStyleTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcomeScreen"
+        android:text="@string/helloNewPeople"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:paddingHorizontal="20dp"
+        android:gravity="center_horizontal"
 
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="100dp"
         />
+
+    <EditText
+        android:id="@+id/fullName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/shape_for_text"
+        android:textSize="27sp"
+        android:inputType="textEmailAddress"
+        android:hint="@string/fullName"
+
+        android:gravity="center"
+        android:paddingHorizontal="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="90dp"/>
 
     <EditText
         android:id="@+id/email"
@@ -35,9 +54,9 @@
         android:paddingHorizontal="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:layout_constraintTop_toBottomOf="@+id/fullName"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="30dp"/>
 
     <EditText
         android:id="@+id/password"
@@ -57,12 +76,12 @@
         android:layout_marginTop="30dp"/>
 
     <Button
-        android:id="@+id/signIn"
+        android:id="@+id/signUp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
         android:background="@drawable/shape_button"
-        android:text="@string/signIn"
+        android:text="@string/signUp"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,16 +91,16 @@
         />
 
     <Button
-        android:id="@+id/signUp"
+        android:id="@+id/signIn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
         android:background="#00FFFFFF"
-        android:text="@string/signUpGo"
+        android:text="@string/signInGo"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signIn"
+        app:layout_constraintTop_toBottomOf="@+id/signUp"
         android:layout_marginTop="15dp"
         />
 
