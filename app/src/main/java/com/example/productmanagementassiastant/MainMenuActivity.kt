@@ -44,7 +44,9 @@ class MainMenuActivity : AppCompatActivity() {
 
         binding.logOut.setOnClickListener {
             sp.edit().putString("TY", "null").commit()
-            finish()
+            val intent = Intent(this@MainMenuActivity,
+                MainActivity::class.java)
+            startActivity(intent)
         }
 
         binding.goToScanning.setOnClickListener {
