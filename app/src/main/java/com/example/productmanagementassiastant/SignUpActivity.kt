@@ -22,6 +22,7 @@ class SignUpActivity : AppCompatActivity() {
         _binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         with(binding) {
             signIn.setOnClickListener {
                 finish()

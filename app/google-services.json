@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1015553132049",
-    "project_id": "product-management-assistant",
-    "storage_bucket": "product-management-assistant.appspot.com"
+    "project_number": "528016991362",
+    "project_id": "product-management-assiastant",
+    "storage_bucket": "product-management-assiastant.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1015553132049:android:a0b0735194cd3477aa13b0",
+        "mobilesdk_app_id": "1:528016991362:android:336db52f8c6ad20d95409b",
         "android_client_info": {
           "package_name": "com.example.productmanagementassiastant"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAO_dV-deX1_imkrPywbAXwHHHh9twqrJM"
+          "current_key": "AIzaSyCNyTkTCRoixJx40x3eYukkcfd8dUUbKRg"
         }
       ],
       "services": {

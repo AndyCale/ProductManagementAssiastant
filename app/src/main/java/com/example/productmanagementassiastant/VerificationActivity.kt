@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.productmanagementassiastant.databinding.ActivitySignUpBinding
 import com.example.productmanagementassiastant.databinding.ActivityVerificationBinding
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -46,7 +45,7 @@ class VerificationActivity : AppCompatActivity() {
                 }
         }
         else {
-            var sp = getSharedPreferences("email and password", MODE_PRIVATE)
+            val sp = getSharedPreferences("email and password", MODE_PRIVATE)
             sp.edit().putString("fullName", "null")
                 .commit()
             Toast.makeText(
