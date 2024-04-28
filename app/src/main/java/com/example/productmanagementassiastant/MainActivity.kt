@@ -11,6 +11,7 @@ import com.example.productmanagementassiastant.databinding.ActivityMainBinding
 import com.example.productmanagementassiastant.databinding.ActivityMainMenuBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val dexOutputDir: File = codeCacheDir
+        dexOutputDir.setReadOnly()
 
         var sp = getSharedPreferences("email and password", MODE_PRIVATE)
         if (sp.getString("TY", "null") != "null") {

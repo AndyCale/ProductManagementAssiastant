@@ -12,7 +12,10 @@ import androidx.core.content.ContextCompat
 import com.example.productmanagementassiastant.databinding.ActivityMainBinding
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import com.example.productmanagementassiastant.databinding.ActivityMainMenuBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.barcode.common.Barcode
 
 
@@ -80,9 +83,43 @@ class MainMenuActivity : AppCompatActivity() {
         ScannerActivity.startScanner(this) {barcodes ->
             barcodes.forEach { barcode ->
 
-                val intent = Intent(this@MainMenuActivity, MoveTheProductActivity::class.java)
-                intent.putExtra(MoveTheProductActivity.inform, barcode.rawValue.toString())
-                startActivity(intent)
+                Toast.makeText(
+                    this@MainMenuActivity, "Загрузка товара", Toast.LENGTH_SHORT).show()
+                val db = Firebase.firestore
+
+                db.collection("products")
+                    .whereEqualTo("name", barcode.rawValue.toString())
+                    .get()
+                    .addOnSuccessListener { result ->
+
+                        if (result.isEmpty) { // если товара еще нет у нас
+                            val intent = Intent(this@MainMenuActivity, MoveTheProductActivity::class.java)
+                            intent.putExtra("found", 0)
+                            intent.putExtra("info", barcode.rawValue.toString())
+                            startActivity(intent)
+
+                        } else { // если товар уже у нас есть
+                            val intent = Intent(this@MainMenuActivity, MoveTheProductActivity::class.java)
+                            for (product in result) {
+                                if ((product.getString("place")?.get(0) ?: 's') == 's')
+                                    intent.putExtra("found", 1)
+                                else if ((product.getString("place")?.get(0) ?: 's') == 'r')
+                                    intent.putExtra("found", 2)
+                                else
+                                    intent.putExtra("found", 3)
+                            }
+                            intent.putExtra("info", barcode.rawValue.toString())
+                            startActivity(intent)
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            this@MainMenuActivity,
+                            "Не получилось, попробуйте позже",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
             }
 
         }

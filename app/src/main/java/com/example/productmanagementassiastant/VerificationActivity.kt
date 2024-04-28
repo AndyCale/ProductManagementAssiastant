@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.productmanagementassiastant.databinding.ActivitySignUpBinding
 import com.example.productmanagementassiastant.databinding.ActivityVerificationBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -21,7 +20,7 @@ class VerificationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        val info = intent.getStringArrayListExtra(MoveTheProductActivity.inform)
+        val info = intent.getStringArrayListExtra("info")
         if (info != null) {
             val user = hashMapOf(
                 "full_name" to info[0],

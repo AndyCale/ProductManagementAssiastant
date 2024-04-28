@@ -109,6 +109,7 @@ class ScannerActivity : AppCompatActivity() {
         private var onScan: ((barcodes: List<Barcode>) -> Unit)? = null
         fun startScanner(context: Context, onScan: (barcodes: List<Barcode>) -> Unit) {
             this.onScan = onScan
+
             Intent(context, ScannerActivity::class.java).also {
                 context.startActivity(it)
             }

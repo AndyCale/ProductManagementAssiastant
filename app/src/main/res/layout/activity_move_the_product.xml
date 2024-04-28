@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MoveTheProductActivity"
+    android:orientation="vertical"
     android:background="@color/background">
-
-    <TextView
-        android:id="@+id/nameProduct"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/loading"
-        style="@style/textStyle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </TextView>
 
     <Button
         android:id="@+id/backToMenu"
@@ -33,4 +21,59 @@
         android:layout_marginStart="15dp">
     </Button>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/nameProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        style="@style/textStyleTitle"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center_horizontal">
+    </TextView>
+
+    <TextView
+        android:id="@+id/placeProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        style="@style/textStyle"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal">
+    </TextView>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="250dp"
+        android:layout_height="90dp"
+        android:background="@drawable/shape_button"
+        android:text="@string/onWarehouse"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="70dp">
+    </Button>
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="250dp"
+        android:layout_height="90dp"
+        android:background="@drawable/shape_button"
+        android:text="@string/forRepairs"
+        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp">
+    </Button>
+
+    <EditText
+        android:id="@+id/reason"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="@string/reason"
+        android:layout_marginTop="50dp"
+        style="@style/textStyle"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible"
+        />
+
+
+</LinearLayout>
