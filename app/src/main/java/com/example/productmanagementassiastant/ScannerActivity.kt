@@ -25,7 +25,7 @@ import java.util.concurrent.Executors
 class ScannerActivity : AppCompatActivity() {
     private var _binding: ActivityScannerBinding? = null
     private val binding: ActivityScannerBinding
-        get() = _binding ?: throw IllegalStateException("Binding in Main Activity must not be null")
+        get() = _binding ?: throw IllegalStateException("Binding in Scanner Activity must not be null")
 
     private lateinit var cameraSelector: CameraSelector
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>

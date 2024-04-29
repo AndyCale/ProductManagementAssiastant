@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ProductManagementAssiastant"
         tools:targetApi="31">
         <activity
+            android:name=".InfoTheProductActivity"
+            android:exported="false" />
+        <activity
             android:name=".VerificationActivity"
             android:exported="false" />
         <activity

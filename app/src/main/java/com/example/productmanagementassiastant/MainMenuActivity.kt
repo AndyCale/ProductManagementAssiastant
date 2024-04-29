@@ -13,6 +13,8 @@ import com.example.productmanagementassiastant.databinding.ActivityMainBinding
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat.startActivity
+import com.example.productmanagementassiastant.ScannerActivity.Companion.startScanner
 import com.example.productmanagementassiastant.databinding.ActivityMainMenuBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -55,6 +57,10 @@ class MainMenuActivity : AppCompatActivity() {
         binding.goToScanning.setOnClickListener {
             requestCameraAndStartScanner()
         }
+
+        binding.openInfo.setOnClickListener {
+            requestCameraAndStartScannerForInfo()
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -72,6 +78,15 @@ class MainMenuActivity : AppCompatActivity() {
     private fun requestCameraAndStartScanner() {
         if (isPermissionGranted(cameraPermission)) {
             startScanner()
+        }
+        else {
+            requestCameraPermission()
+        }
+    }
+
+    private fun requestCameraAndStartScannerForInfo() {
+        if (isPermissionGranted(cameraPermission)) {
+            startScannerForInfo()
         }
         else {
             requestCameraPermission()
@@ -122,6 +137,48 @@ class MainMenuActivity : AppCompatActivity() {
 
             }
 
+        }
+    }
+
+
+    private fun startScannerForInfo() {
+
+        ScannerActivity.startScanner(this) {barcodes ->
+            barcodes.forEach { barcode ->
+
+                Toast.makeText(
+                    this@MainMenuActivity, "Загрузка информации о товаре", Toast.LENGTH_SHORT).show()
+                val db = Firebase.firestore
+
+                db.collection("products")
+                    .whereEqualTo("name", barcode.rawValue.toString())
+                    .get()
+                    .addOnSuccessListener { result ->
+
+                        if (result.isEmpty) { // если товара еще нет у нас
+                            Toast.makeText(
+                                this@MainMenuActivity,
+                                "Данного товара еще нет в базе данных",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else { // если товар уже у нас есть
+                            for (product in result) {
+                                val intent = Intent(this@MainMenuActivity,
+                                    InfoTheProductActivity::class.java)
+                                intent.putExtra("document", product.id)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(
+                            this@MainMenuActivity,
+                            "Не получилось, попробуйте позже",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
         }
     }
 

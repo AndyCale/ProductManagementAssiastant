@@ -2,7 +2,7 @@
     <string name="app_name">Product\nManagement\nAssiastant</string>
     <string name="welcomeScreen">Вход в аккаунт</string>
     <string name="TextToScanning">Отсканировать товар</string>
-    <string name="OpenDataBase">Открыть список товаров</string>
+    <string name="OpenDataBase">Найти информацию о товаре</string>
     <string name="back">Назад</string>
     <string name="loading">Загрузка...</string>
     <string name="textDuringScanning">Наведите камеру на штрих или qr код</string>
@@ -16,13 +16,19 @@
     <string name="signUpGo"><u>Еще не зарегистрированы?</u></string>
     <string name="signUp">Зарегистрироваться</string>
     <string name="signInGo"><u>Уже зарегистрированы?</u></string>
-    
+
     <string name="onWarehouse">Отправить на склад</string>
     <string name="forRepairs">Отправить в ремонт</string>
     <string name="issue">Выдать товар</string>
-    <string name="reason">причина поломки</string>
+    <string name="reason">Причина поломки</string>
     <string name="arrived">Товар только прибыл</string>
     <string name="warehouse">Товар находится на складе</string>
     <string name="repair">Товар находится в ремонте</string>
     <string name="issued">Товар был выдан</string>
+    
+    <string name="place">Место товара:</string>
+    <string name="change">Последнее изменение:</string>
+    <string name="timeChange">Время последнего изменения:</string>
+    <string name="whoChange">Изменение внес:</string>
+    <string name="reasonRep">Причина ремонта:</string>
 </resources>
