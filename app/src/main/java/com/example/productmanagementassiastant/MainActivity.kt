@@ -44,20 +44,31 @@ class MainActivity : AppCompatActivity() {
                     db.collection("users")
                         .get()
                         .addOnSuccessListener { result ->
-                            for (document in result) {
-                                if (document.getString("email") == email.text.toString()) {
-                                    if (document.getString("password") == password.text.toString()) {
-                                        flag = true
-                                        sp.edit().putString("fullName",
-                                            document.getString("full_name")).commit()
-                                        val intent = Intent(this@MainActivity,
-                                            MainMenuActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                    else {
-                                        flag = true
-                                        Toast.makeText(this@MainActivity,
-                                            "Неправильный пароль!", Toast.LENGTH_SHORT).show()
+                            if (result.isEmpty)
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Данный пользователь не найден", Toast.LENGTH_SHORT).show()
+                            else {
+                                for (document in result) {
+                                    if (document.getString("email") == email.text.toString()) {
+                                        if (document.getString("password") == password.text.toString()) {
+                                            flag = true
+                                            sp.edit().putString(
+                                                "fullName",
+                                                document.getString("full_name")
+                                            ).commit()
+                                            val intent = Intent(
+                                                this@MainActivity,
+                                                MainMenuActivity::class.java
+                                            )
+                                            startActivity(intent)
+                                        } else {
+                                            flag = true
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                "Неправильный пароль!", Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
                                 }
                             }
@@ -66,14 +77,6 @@ class MainActivity : AppCompatActivity() {
                             Toast.makeText(this@MainActivity,
                                 "Произошла ошибка, попробуйте позже", Toast.LENGTH_SHORT).show()
                         }
-
-                    Handler().postDelayed({
-                        if (!flag) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Данный пользователь не найден", Toast.LENGTH_SHORT).show()
-                        }
-                    }, 1000)
                 }
             }
         }
