@@ -31,6 +31,8 @@ class VerificationActivity : AppCompatActivity() {
             db.collection("users")
                 .add(user)
                 .addOnSuccessListener { documentReference ->
+                    val sp = getSharedPreferences("email and password", MODE_PRIVATE)
+                    //sp.edit().putString("id", documentReference.id).commit()
                     val intent =
                         Intent(this@VerificationActivity, MainMenuActivity::class.java)
                     startActivity(intent)

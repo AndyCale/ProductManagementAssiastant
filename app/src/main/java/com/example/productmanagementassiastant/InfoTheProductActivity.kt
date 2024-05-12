@@ -36,9 +36,9 @@ class InfoTheProductActivity : AppCompatActivity() {
                     binding.timeChangeProduct.text = document.get("change").toString().substring(1)
                     binding.whoChangeProduct.text = document.get("who_changed").toString()
 
-                    if (document.get("change").toString().get(0) == 's')
+                    if (document.get("place").toString().get(0) == 's')
                         binding.changeProduct.text = "Товар был перемещен на склад "
-                    else if (document.get("change").toString().get(0) == 'd')
+                    else if (document.get("place").toString().get(0) == 'd')
                         binding.changeProduct.text = "Товар был выдан"
                     else {
                         binding.reason.visibility = View.VISIBLE

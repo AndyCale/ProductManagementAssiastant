@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LogActivity"
+    android:background="@color/color3"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/backToMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:background="@drawable/shape_button"
+            android:text="@string/back"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            style="@style/textStyleTitle"
+            >
+        </Button>
+
+        <Button
+            android:id="@+id/scanning"
+            android:layout_width="wrap_content"
+            android:layout_height="70dp"
+            android:background="@drawable/shape_button"
+            android:text="@string/scanning"
+            android:textSize="17sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="10dp"
+            style="@style/textStyleTitle"
+            >
+        </Button>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/whatInput"
+        style="@style/textStyle"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="20dp"
+        />
+
+    <EditText
+        android:id="@+id/whatSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="15dp"
+        android:paddingHorizontal="10dp"
+        android:inputType="text"
+        android:textSize="25sp"
+        android:gravity="center_horizontal"
+        />
+
+    <Button
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/shape_button"
+        android:text="@string/found"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        />
+
+    <ListView
+        android:id="@+id/changes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/list_item"
+        android:dividerHeight="15.0sp"
+        >
+    </ListView>
+
+</LinearLayout>

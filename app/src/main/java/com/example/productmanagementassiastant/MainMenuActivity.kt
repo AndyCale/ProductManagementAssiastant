@@ -25,6 +25,7 @@ class MainMenuActivity : AppCompatActivity() {
     private var _binding: ActivityMainMenuBinding? = null
     private val binding: ActivityMainMenuBinding
         get() = _binding ?: throw IllegalStateException("Binding in MainMenu Activity must not be null")
+    val db = Firebase.firestore
 
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.
@@ -42,8 +43,15 @@ class MainMenuActivity : AppCompatActivity() {
         _binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var sp = getSharedPreferences("email and password", Context.MODE_PRIVATE)
+        val sp = getSharedPreferences("email and password", Context.MODE_PRIVATE)
         sp.edit().putString("TY", "9").commit()
+
+        /*
+        if (sp.getString("id", "null") == "null") {
+            idPerson()
+        }
+
+         */
 
         binding.fullName.text = sp.getString("fullName", "Произошла непредвиденная ошибка")
 
@@ -60,6 +68,11 @@ class MainMenuActivity : AppCompatActivity() {
 
         binding.openInfo.setOnClickListener {
             requestCameraAndStartScannerForInfo()
+        }
+
+        binding.log.setOnClickListener {
+
+            startActivity(Intent(this@MainMenuActivity, LogActivity::class.java))
         }
     }
 
@@ -100,7 +113,7 @@ class MainMenuActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@MainMenuActivity, "Загрузка товара", Toast.LENGTH_SHORT).show()
-                val db = Firebase.firestore
+
 
                 db.collection("products")
                     .whereEqualTo("name", barcode.rawValue.toString())
@@ -148,7 +161,6 @@ class MainMenuActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@MainMenuActivity, "Загрузка информации о товаре", Toast.LENGTH_SHORT).show()
-                val db = Firebase.firestore
 
                 db.collection("products")
                     .whereEqualTo("name", barcode.rawValue.toString())
@@ -216,6 +228,38 @@ class MainMenuActivity : AppCompatActivity() {
             it.data = uri
             startActivity(it)
         }
+    }
+
+    fun idPerson() {
+        val sp = getSharedPreferences("email and password", Context.MODE_PRIVATE)
+        db.collection("users")
+            .whereEqualTo("full_name", sp.getString("fullName", "Noname"))
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    Toast.makeText(this@MainMenuActivity,
+                        "Что-то пошло не так, перезайдите в свой аккаунт, пожалуйста",
+                        Toast.LENGTH_SHORT).show()
+                    sp.edit().putString("TY", "null").commit()
+                    val intent = Intent(this@MainMenuActivity,
+                        MainActivity::class.java)
+                    startActivity(intent)
+                }
+                else {
+                    for (user in result) {
+                        sp.edit().putString("id", user.id).commit()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this@MainMenuActivity,
+                    "Что-то пошло не так, перезайдите в свой аккаунт, пожалуйста",
+                    Toast.LENGTH_SHORT).show()
+                sp.edit().putString("TY", "null").commit()
+                val intent = Intent(this@MainMenuActivity,
+                    MainActivity::class.java)
+                startActivity(intent)
+            }
     }
 }
 

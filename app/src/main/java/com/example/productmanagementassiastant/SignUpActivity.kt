@@ -1,5 +1,6 @@
 package com.example.productmanagementassiastant
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -37,7 +38,7 @@ class SignUpActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    var sp = getSharedPreferences("email and password", MODE_PRIVATE)
+                    val sp = getSharedPreferences("email and password", MODE_PRIVATE)
 
                     db.collection("users")
                         .whereEqualTo("email", email.text.toString())

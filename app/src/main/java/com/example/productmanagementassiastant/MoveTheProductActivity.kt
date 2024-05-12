@@ -1,5 +1,6 @@
 package com.example.productmanagementassiastant
 
+import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.opengl.Visibility
@@ -29,6 +30,17 @@ class MoveTheProductActivity : AppCompatActivity() {
 
         binding.backToMenu.setOnClickListener {
             finish()
+        }
+
+        binding.plus.setOnClickListener {
+            val num = binding.count.text.toString().toInt() + 1
+            binding.count.setText(num.toString())
+        }
+
+        binding.minus.setOnClickListener {
+            val num = binding.count.text.toString().toInt() - 1
+            if (num > -1)
+                binding.count.setText(num.toString())
         }
 
         val info = intent.getStringExtra("info")
@@ -109,7 +121,7 @@ class MoveTheProductActivity : AppCompatActivity() {
 
     fun addNewProduct(name : String, place : String, reason: String) {
         val sp = getSharedPreferences("email and password", MODE_PRIVATE)
-        val sdf = SimpleDateFormat("dd.M.yyyy/HH:mm:ss")
+        val sdf = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru"))
         val currentDate = sdf.format(Date())
 
         val product = hashMapOf(
@@ -117,8 +129,15 @@ class MoveTheProductActivity : AppCompatActivity() {
             "place" to place,
             "change" to "m$currentDate",
             "reason_repair" to reason,
-            "who_changed" to sp.getString("fullName", "Ошибка")
+            "who_changed" to sp.getString("fullName", "Ошибка"),
+            "quantity" to binding.count.text.toString().toInt()
         )
+
+        if (place[0] == 's')
+            addChange(name, sp.getString("fullName", "Ошибка").toString(), "add_s", currentDate.toString())
+        else {
+            addChange(name, sp.getString("fullName", "Ошибка").toString(), "add_r_${reason}_/Серийник/", currentDate.toString())
+        }
 
         db.collection("products")
             .add(product)
@@ -148,10 +167,32 @@ class MoveTheProductActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { result ->
                 for (product in result) {
+                    /*
+                    if (product.get("quantity").toString().toInt() < binding.count.text.toString().toInt()) {
+                        Toast.makeText(this, "Количество данного товара", Toast.LENGTH_SHORT).show()
+                    }
+
+                     */
+                    val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
                     val sp = getSharedPreferences("email and password", MODE_PRIVATE)
+                    val from = product.get("place").toString().get(0)
+
+                    if (from == 's') {
+                        if (place[0] == 'r')
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_s_r_${reason}_/Серийник/", currentDate)
+                        else
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_s_d", currentDate)
+                    }
+                    else {
+                        if (place[0] == 's')
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_r_s", currentDate)
+                        else
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_r_d", currentDate)
+                    }
+
                     db.collection("products").document(product.id).update("place", place)
                     db.collection("products").document(product.id).update("change",
-                        SimpleDateFormat("dd.M.yyyy/HH:mm:ss").format(Date()))
+                        currentDate)
                     db.collection("products").document(product.id).update("who_changed",
                         sp.getString("fullName", "Произошла непредвиденная ошибка"))
                     if (reason != null)
@@ -172,6 +213,25 @@ class MoveTheProductActivity : AppCompatActivity() {
                 }
             }
             .addOnFailureListener { e ->
+                Toast.makeText(
+                    this@MoveTheProductActivity,
+                    "Не получилось, попробуйте позже",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun addChange(name: String, who: String, what: String, date: String) {
+        val change = hashMapOf(
+            "name" to name,
+            "who" to who,
+            "what" to what,
+            "date" to date
+        )
+
+        db.collection("changes")
+            .add(change)
+            .addOnFailureListener {
                 Toast.makeText(
                     this@MoveTheProductActivity,
                     "Не получилось, попробуйте позже",
