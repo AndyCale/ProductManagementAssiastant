@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import com.example.productmanagementassiastant.ScannerActivity.Companion.startScanner
 import com.example.productmanagementassiastant.databinding.ActivityInfoTheProductBinding
 import com.example.productmanagementassiastant.databinding.ActivityLogBinding
 import com.google.firebase.firestore.Query
@@ -83,7 +84,8 @@ class LogActivity : AppCompatActivity() {
                                     listItem.add(parseToLog(res2.get("who").toString(),
                                         res2.get("name").toString(),
                                         res2.get("what").toString(),
-                                        res2.get("date").toString()))
+                                        res2.get("date").toString(),
+                                        res2.get("quantity").toString()))
                                 }
 
                                 val dateFormat = SimpleDateFormat("dd.MM.yyyy/HH:mm:ss", Locale("ru"))
@@ -109,7 +111,8 @@ class LogActivity : AppCompatActivity() {
                         listItem.add(parseToLog(res.get("who").toString(),
                             res.get("name").toString(),
                             res.get("what").toString(),
-                            res.get("date").toString()))
+                            res.get("date").toString(),
+                            res.get("quantity").toString()))
                     }
 
                     val dateFormat = SimpleDateFormat("dd.MM.yyyy/HH:mm:ss", Locale("ru"))
@@ -128,7 +131,7 @@ class LogActivity : AppCompatActivity() {
             }
     }
 
-    private fun parseToLog(who: String, name: String, what: String, date: String, ) : String {
+    private fun parseToLog(who: String, name: String, what: String, date: String, quantity: String) : String {
         /*
         Добавил на склад новый товар: 83984
         data
@@ -174,6 +177,8 @@ class LogActivity : AppCompatActivity() {
         else {
             str += "Изменил количество товара: $name\nБыло: ${temp[1]},Стало: ${temp[2]}\n$date"
         }
+        if (quantity != "null")
+            str += "\nКоличество товара: $quantity"
 
         return str
     }

@@ -5,8 +5,8 @@
     tools:context=".InfoTheProductActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:background="@color/background">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -31,13 +31,14 @@
 
     <TextView
         android:id="@+id/nameProduct"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/loading"
         style="@style/textStyleTitle"
         android:layout_marginTop="80dp"
         android:textSize="40sp"
         android:gravity="center"
+        android:layout_marginHorizontal="20dp"
         android:layout_gravity="center_horizontal">
     </TextView>
 
@@ -69,6 +70,38 @@
             android:text="@string/loading"
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@id/place"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp">
+
+        <TextView
+            android:id="@+id/count"
+            style="@style/textStyle"
+            android:layout_width="300dp"
+            android:layout_height="40dp"
+            android:text="@string/count"
+            android:textSize="26sp"
+            android:background="@color/color2"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/countProduct"
+            style="@style/textStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/count"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

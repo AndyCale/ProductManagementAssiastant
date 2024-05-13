@@ -20,8 +20,10 @@ import java.util.*
 class MoveTheProductActivity : AppCompatActivity() {
     private var _binding: ActivityMoveTheProductBinding? = null
     private val binding: ActivityMoveTheProductBinding
-        get() = _binding ?: throw IllegalStateException("Binding in Main Activity must not be null")
+        get() = _binding ?: throw IllegalStateException("Binding in Move Activity must not be null")
     val db = Firebase.firestore
+    private var id : String = "null"
+    private var countRepair : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +45,10 @@ class MoveTheProductActivity : AppCompatActivity() {
                 binding.count.setText(num.toString())
         }
 
+        id = intent.getStringExtra("id")!!
         val info = intent.getStringExtra("info")
         val found = intent.getIntExtra("found", 0)
+        countRepair = intent.getIntExtra("countRepair", 0)
 
         if (info != null) {
             if (found == 0 || found == 3) { // еще нет такого или он выдан
@@ -60,12 +64,14 @@ class MoveTheProductActivity : AppCompatActivity() {
                     binding.placeProduct.text = getString(R.string.warehouse)
                     binding.button1.text = getString(R.string.forRepairs)
                     binding.button2.text = getString(R.string.issue)
-                }
-                else { // в ремонте
+                } else { // в ремонте
                     binding.placeProduct.text = getString(R.string.repair)
                     binding.button1.text = getString(R.string.onWarehouse)
                     binding.button2.text = getString(R.string.issue)
                 }
+            }
+            db.collection("products").document(id).get().addOnSuccessListener { it ->
+                binding.countAvail.text = it.get("quantity").toString()
             }
             binding.nameProduct.text = info
 
@@ -130,14 +136,9 @@ class MoveTheProductActivity : AppCompatActivity() {
             "change" to "m$currentDate",
             "reason_repair" to reason,
             "who_changed" to sp.getString("fullName", "Ошибка"),
-            "quantity" to binding.count.text.toString().toInt()
+            "quantity" to binding.count.text.toString(),
+            "number" to "null"
         )
-
-        if (place[0] == 's')
-            addChange(name, sp.getString("fullName", "Ошибка").toString(), "add_s", currentDate.toString())
-        else {
-            addChange(name, sp.getString("fullName", "Ошибка").toString(), "add_r_${reason}_/Серийник/", currentDate.toString())
-        }
 
         db.collection("products")
             .add(product)
@@ -148,6 +149,17 @@ class MoveTheProductActivity : AppCompatActivity() {
                 else
                     Toast.makeText(this@MoveTheProductActivity,
                         "Товар перемещен в ремонт", Toast.LENGTH_SHORT).show()
+
+                if (place[0] == 's')
+                    addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                        "add_s", currentDate.toString(), binding.count.text.toString())
+                else {
+                    val serNum = documentReference.id
+                    addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                        "add_r_${reason}_${serNum + "0"}", currentDate.toString(), binding.count.text.toString())
+
+                    db.collection("products").document(serNum).update("number", serNum + "0")
+                }
 
                 startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
             }
@@ -163,41 +175,45 @@ class MoveTheProductActivity : AppCompatActivity() {
     fun moveProduct(name : String, place : String, reason : String?) {
 
         db.collection("products")
-            .whereEqualTo("name", name)
+            .document(id)
             .get()
-            .addOnSuccessListener { result ->
-                for (product in result) {
-                    /*
-                    if (product.get("quantity").toString().toInt() < binding.count.text.toString().toInt()) {
-                        Toast.makeText(this, "Количество данного товара", Toast.LENGTH_SHORT).show()
-                    }
+            .addOnSuccessListener { product ->
 
-                     */
+                if (product.get("quantity").toString().toInt() < binding.count.text.toString().toInt()) {
+                    Toast.makeText(this, "Выбранное количество превышает имеющееся: " +
+                            "${product.get("quantity").toString()}", Toast.LENGTH_SHORT).show()
+                }
+                else {
+
                     val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
                     val sp = getSharedPreferences("email and password", MODE_PRIVATE)
-                    val from = product.get("place").toString().get(0)
+                    val from = product.get("place").toString()[0]
 
                     if (from == 's') {
-                        if (place[0] == 'r')
-                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_s_r_${reason}_/Серийник/", currentDate)
+                        if (place[0] == 'r') {
+                            replaceToRepair(name, place, reason!!, from)
+                        }
                         else
-                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_s_d", currentDate)
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                                "move_s_d", currentDate, binding.count.text.toString())
+                    }
+                    else if (from == 'r') {
+                        if (place[0] == 's')
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                                "move_r_s", currentDate, binding.count.text.toString())
+                        else
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                                "move_r_d", currentDate, binding.count.text.toString())
                     }
                     else {
                         if (place[0] == 's')
-                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_r_s", currentDate)
+                            addChange(name, sp.getString("fullName", "Ошибка").toString(),
+                                "move_d_s", currentDate, binding.count.text.toString())
                         else
-                            addChange(name, sp.getString("fullName", "Ошибка").toString(), "move_r_d", currentDate)
+                            replaceToRepair(name, place, reason!!, from)
                     }
 
-                    db.collection("products").document(product.id).update("place", place)
-                    db.collection("products").document(product.id).update("change",
-                        currentDate)
-                    db.collection("products").document(product.id).update("who_changed",
-                        sp.getString("fullName", "Произошла непредвиденная ошибка"))
-                    if (reason != null)
-                        db.collection("products").document(product.id).update("reason_repair",
-                        reason)
+                    changeDate(id, product.get("quantity").toString())
 
                     if (place[0] == 's')
                         Toast.makeText(this@MoveTheProductActivity,
@@ -210,9 +226,10 @@ class MoveTheProductActivity : AppCompatActivity() {
                             "Товар был выдан", Toast.LENGTH_SHORT).show()
 
                     startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
+
                 }
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener {
                 Toast.makeText(
                     this@MoveTheProductActivity,
                     "Не получилось, попробуйте позже",
@@ -221,12 +238,170 @@ class MoveTheProductActivity : AppCompatActivity() {
             }
     }
 
-    private fun addChange(name: String, who: String, what: String, date: String) {
+    private fun replace(name : String, place : String) {
+        db.collection("products")
+            .whereEqualTo("name", name)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
+                val sp = getSharedPreferences("email and password", MODE_PRIVATE)
+                var flag = false
+
+                for (product in result) {
+                    if (product.get("place").toString()[0] == place[0]) {
+                        flag = true
+                        db.collection("products").document(product.id)
+                            .update("quantity", product.get("quantity").toString()
+                                .toInt() + binding.count.text.toString().toInt())
+
+                        db.collection("products").document(product.id).update("change",
+                            currentDate)
+                        db.collection("products").document(product.id).update("who_changed",
+                            sp.getString("fullName", "Произошла непредвиденная ошибка"))
+
+                    }
+                }
+
+                if (!flag) { // если на таком месте нет товара с данным именем
+
+                    val product = hashMapOf(
+                        "name" to name,
+                        "place" to place,
+                        "change" to "m$currentDate",
+                        "reason_repair" to "null",
+                        "who_changed" to sp.getString("fullName", "Ошибка"),
+                        "quantity" to binding.count.text.toString()
+                    )
+
+                    db.collection("products")
+                        .add(product)
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                this@MoveTheProductActivity,
+                                "Не получилось, попробуйте позже",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    this@MoveTheProductActivity,
+                    "Не получилось, попробуйте позже",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun replaceToRepair(name : String, place : String, reason: String, from : Char) {
+        db.collection("products")
+            .whereEqualTo("name", name)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
+                val sp = getSharedPreferences("email and password", MODE_PRIVATE)
+                var count = 0
+                var flag = false
+
+                for (product in result) {
+                    if (product.get("place").toString()[0] == place[0]) {
+                        count += 1
+
+                        if (product.get("reason_repair").toString() == reason) {
+                            flag = true
+                            db.collection("products").document(product.id)
+                                .update(
+                                    "quantity", product.get("quantity").toString()
+                                        .toInt() + binding.count.text.toString().toInt()
+                                )
+
+                            db.collection("products").document(product.id).update(
+                                "change",
+                                currentDate
+                            )
+                            db.collection("products").document(product.id).update(
+                                "who_changed",
+                                sp.getString("fullName", "Произошла непредвиденная ошибка"))
+
+                            addChange(name, sp.getString("fullName",
+                                "Ошибка").toString(),
+                                "move_${from}_r_${reason}_${product.get("number")}",
+                                currentDate, binding.count.text.toString())
+
+                        }
+
+                    }
+                }
+
+                if (!flag) { // если на таком месте нет товара с данным именем
+
+                    val product = hashMapOf(
+                        "name" to name,
+                        "place" to place,
+                        "change" to "m$currentDate",
+                        "reason_repair" to reason,
+                        "who_changed" to sp.getString("fullName", "Ошибка"),
+                        "quantity" to binding.count.text.toString(),
+                        "number" to "null"
+                    )
+
+                    db.collection("products")
+                        .add(product)
+                        .addOnSuccessListener { documentReference ->
+                            db.collection("products").document(documentReference.id)
+                                .update("number", documentReference.id + count.toString())
+
+                            addChange(name, sp.getString("fullName",
+                                "Ошибка").toString(),
+                                "move_${from}_r_${reason}_${documentReference.id +
+                                        count.toString()}", currentDate, binding.count.text.toString())
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                this@MoveTheProductActivity,
+                                "Не получилось, попробуйте позже",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    this@MoveTheProductActivity,
+                    "Не получилось, попробуйте позже",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    private fun changeDate(id : String, quantity : String) {
+        // изменить дату и человека, количество, если надо - удалить
+
+        if (quantity.toInt() == binding.count.text.toString().toInt())
+            db.collection("products").document(id).delete()
+        else {
+            val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
+            val sp = getSharedPreferences("email and password", MODE_PRIVATE)
+
+            db.collection("products").document(id)
+                .update("quantity", quantity.toInt() - binding.count.text.toString().toInt())
+            db.collection("products").document(id)
+                .update("change", currentDate)
+            db.collection("products").document(id)
+                .update("who_changed", sp.getString("fullName",
+                    "Произошла непредвиденная ошибка"))
+        }
+    }
+
+    private fun addChange(name: String, who: String, what: String, date: String, quantity: String) {
         val change = hashMapOf(
             "name" to name,
             "who" to who,
             "what" to what,
-            "date" to date
+            "date" to date,
+            "quantity" to quantity
         )
 
         db.collection("changes")

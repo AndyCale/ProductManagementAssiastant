@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.productmanagementassiastant.databinding.ActivityInfoTheProductBinding
-import com.example.productmanagementassiastant.databinding.ActivityMoveTheProductBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -25,14 +24,17 @@ class InfoTheProductActivity : AppCompatActivity() {
             finish()
         }
 
-
-        val document = intent.getStringExtra("document")
+        val document = intent.getStringExtra("id")
         if (document != null) {
             val db = Firebase.firestore
             db.collection("products").document(document).get().addOnSuccessListener { document ->
                 if (document != null) {
                     binding.nameProduct.text = document.get("name").toString()
-                    binding.placeProduct.text = document.get("place").toString()
+                    if (document.get("place").toString()[0] == 'd')
+                        binding.placeProduct.text = "Товар был выдан"
+                    else
+                        binding.placeProduct.text = document.get("place").toString()
+                    binding.countProduct.text = document.get("quantity").toString()
                     binding.timeChangeProduct.text = document.get("change").toString().substring(1)
                     binding.whoChangeProduct.text = document.get("who_changed").toString()
 

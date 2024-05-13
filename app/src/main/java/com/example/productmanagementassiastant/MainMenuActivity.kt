@@ -127,16 +127,10 @@ class MainMenuActivity : AppCompatActivity() {
                             startActivity(intent)
 
                         } else { // если товар уже у нас есть
-                            val intent = Intent(this@MainMenuActivity, MoveTheProductActivity::class.java)
-                            for (product in result) {
-                                if ((product.getString("place")?.get(0) ?: 's') == 's')
-                                    intent.putExtra("found", 1)
-                                else if ((product.getString("place")?.get(0) ?: 's') == 'r')
-                                    intent.putExtra("found", 2)
-                                else
-                                    intent.putExtra("found", 3)
-                            }
+                            val intent = Intent(this@MainMenuActivity, AskActivity::class.java)
+
                             intent.putExtra("info", barcode.rawValue.toString())
+                            intent.putExtra("choice", 1)
                             startActivity(intent)
                         }
                     }
@@ -175,12 +169,11 @@ class MainMenuActivity : AppCompatActivity() {
                             ).show()
 
                         } else { // если товар уже у нас есть
-                            for (product in result) {
-                                val intent = Intent(this@MainMenuActivity,
-                                    InfoTheProductActivity::class.java)
-                                intent.putExtra("document", product.id)
-                                startActivity(intent)
-                            }
+                            val intent = Intent(this@MainMenuActivity, AskActivity::class.java)
+
+                            intent.putExtra("info", barcode.rawValue.toString())
+                            intent.putExtra("choice", 2)
+                            startActivity(intent)
                         }
                     }
                     .addOnFailureListener { e ->

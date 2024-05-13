@@ -26,13 +26,18 @@
     <string name="warehouse">Товар находится на складе</string>
     <string name="repair">Товар находится в ремонте</string>
     <string name="issued">Товар был выдан</string>
+    <string name="addNew">Добавить новый товар</string>
+    <string name="replace">Переместить имеющийся</string>
+    <string name="choiceProduct">Выберете товар:</string>
 
     <string name="place">Место товара:</string>
     <string name="change">Последнее изменение:</string>
     <string name="timeChange">Время последнего изменения:</string>
     <string name="whoChange">Изменение внес:</string>
     <string name="reasonRep">Причина ремонта:</string>
-    <string name="count">Количество товара</string>
+    <string name="countAvail">Количество товара имеющееся: </string>
+    <string name="countReplace">Количество товара перемещаемое:</string>
+    <string name="count">Количество товара:</string>
 
     <string name="whatInput">Введите полное имя человека или название товара</string>
     <string name="found">Вывести журнал логов</string>

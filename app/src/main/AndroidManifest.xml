@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ProductManagementAssiastant"
         tools:targetApi="31">
         <activity
+            android:name=".AskActivity"
+            android:exported="false" />
+        <activity
             android:name=".LogActivity"
             android:exported="false" />
         <activity
