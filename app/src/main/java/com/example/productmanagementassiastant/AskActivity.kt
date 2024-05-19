@@ -49,7 +49,7 @@ class AskActivity : AppCompatActivity() {
                         else if (res.get("place").toString()[0] == 'r') {
                             countRepair += 1
                             str += "Ремонт\nПричина: "
-                            str += "${res.get("reason").toString()}\nСерийный номер: ${res.get("number").toString()}"
+                            str += "${res.get("reason_repair").toString()}\nСерийный номер: ${res.get("number").toString()}"
                         }
                         else
                             str += "Выдано"

@@ -157,28 +157,29 @@ class LogActivity : AppCompatActivity() {
         if (temp[0] == "add") {
             str += "Добавил "
             if (temp[1] == "s")
-                str += "на склад новый товар: $name\n$date"
+                str += "на склад новый товар: $name\n"
             else
                 str += "в ремонт новый товар: $name\nПричина ремонта: ${temp[2]}\n" +
-                        "Серийный номер: ${temp[3]}\n$date"
+                        "Серийный номер: ${temp[3]}\n"
         }
 
         else if (temp[0] == "move") {
             if (temp[2] == "s") {
-                str += "Переместил из ремонта на склад товар: $name\n$date"
+                str += "Переместил из ремонта на склад товар: $name\n"
             }
             else if (temp[2] == "r") {
                 str += "Переместил со склада в ремонт товар: $name\n" +
-                        "Причина ремонта: ${temp[3]}\nСерийный номер: ${temp[4]}\n$date"
+                        "Причина ремонта: ${temp[3]}\nСерийный номер: ${temp[4]}\n"
             }
             else
-                str += "Выдал товар: $name\n$date"
+                str += "Выдал товар: $name\n"
         }
         else {
-            str += "Изменил количество товара: $name\nБыло: ${temp[1]},Стало: ${temp[2]}\n$date"
+            str += "Изменил количество товара: $name\nБыло: ${temp[1]},Стало: ${temp[2]}\n"
         }
         if (quantity != "null")
-            str += "\nКоличество товара: $quantity"
+            str += "Количество товара: $quantity\n"
+        str += date
 
         return str
     }

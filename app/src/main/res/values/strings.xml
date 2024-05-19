@@ -36,8 +36,10 @@
     <string name="whoChange">Изменение внес:</string>
     <string name="reasonRep">Причина ремонта:</string>
     <string name="countAvail">Количество товара имеющееся: </string>
-    <string name="countReplace">Количество товара перемещаемое:</string>
+    <string name="countReplace">Сколько хотите переместить:</string>
+    <string name="countAdd">Сколько товаара хотите добавить:</string>
     <string name="count">Количество товара:</string>
+    <string name="wherePut">Введите, куда поместить товар</string>
 
     <string name="whatInput">Введите полное имя человека или название товара</string>
     <string name="found">Вывести журнал логов</string>

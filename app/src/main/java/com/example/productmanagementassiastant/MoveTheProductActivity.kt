@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.isInvisible
 import com.example.productmanagementassiastant.databinding.ActivityMoveTheProductBinding
 import com.example.productmanagementassiastant.databinding.ActivityScannerBinding
 import com.google.firebase.firestore.ktx.firestore
@@ -45,7 +46,11 @@ class MoveTheProductActivity : AppCompatActivity() {
                 binding.count.setText(num.toString())
         }
 
-        id = intent.getStringExtra("id")!!
+        val idAvailNull = intent.getStringExtra("id")
+        if (idAvailNull == null || idAvailNull == "null")
+            id = "null"
+        else
+            id = idAvailNull
         val info = intent.getStringExtra("info")
         val found = intent.getIntExtra("found", 0)
         countRepair = intent.getIntExtra("countRepair", 0)
@@ -70,14 +75,22 @@ class MoveTheProductActivity : AppCompatActivity() {
                     binding.button2.text = getString(R.string.issue)
                 }
             }
-            db.collection("products").document(id).get().addOnSuccessListener { it ->
-                binding.countAvail.text = it.get("quantity").toString()
+            if (found != 0) {
+                db.collection("products").document(id).get().addOnSuccessListener { it ->
+                    binding.countAvail.text = it.get("quantity").toString()
+                }
+                binding.countReplace.setText(R.string.countAdd)
+            }
+            else {
+                binding.countAvail.visibility = View.GONE
+                binding.countAvailTitle.visibility = View.GONE
             }
             binding.nameProduct.text = info
 
             binding.button1.setOnClickListener {
+                val place = binding.wherePut.text.toString()
                 if (found == 0)
-                    addNewProduct(info, "s", "null")
+                    addNewProduct(info, "s$place", "null")
                 else if (found == 1) {
                     binding.reason.visibility = View.VISIBLE
                     if (binding.reason.text.isEmpty()) {
@@ -85,13 +98,14 @@ class MoveTheProductActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT).show()
                     }
                     else
-                        moveProduct(info, "r", binding.reason.text.toString())
+                        moveProduct(info, "r$place", binding.reason.text.toString())
                 }
                 else
-                    moveProduct(info, "s", "null")
+                    moveProduct(info, "s$place", "null")
             }
 
             binding.button2.setOnClickListener {
+                val place = binding.wherePut.text.toString()
                 if (found == 0) {
                     binding.reason.visibility = View.VISIBLE
                     if (binding.reason.text.isEmpty()) {
@@ -99,7 +113,7 @@ class MoveTheProductActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT).show()
                     }
                     else
-                        addNewProduct(info, "r", binding.reason.text.toString())
+                        addNewProduct(info, "r$place", binding.reason.text.toString())
                 }
                 else if (found == 3) {
                     binding.reason.visibility = View.VISIBLE
@@ -108,7 +122,7 @@ class MoveTheProductActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT).show()
                     }
                     else
-                        moveProduct(info, "r", binding.reason.text.toString())
+                        moveProduct(info, "r$place", binding.reason.text.toString())
                 }
                 else
                     moveProduct(info, "d", "null")
@@ -140,36 +154,155 @@ class MoveTheProductActivity : AppCompatActivity() {
             "number" to "null"
         )
 
-        db.collection("products")
-            .add(product)
-            .addOnSuccessListener { documentReference ->
-                if (place[0] == 's')
-                    Toast.makeText(this@MoveTheProductActivity,
-                        "Товар перемещен на склад", Toast.LENGTH_SHORT).show()
-                else
-                    Toast.makeText(this@MoveTheProductActivity,
-                        "Товар перемещен в ремонт", Toast.LENGTH_SHORT).show()
+        if (place.length == 1) {
+            db.collection("products")
+                .whereEqualTo("name", name)
+                .get()
+                .addOnSuccessListener { result ->
+                    var flag = false
+                    for (res in result) {
+                        if (res.get("place").toString()[0] == 's') {
+                            flag = true
+                            db.collection("products").document(res.id)
+                                .update("quantity", res.get("quantity").toString().toInt()
+                                        + binding.count.text.toString().toInt())
+                            db.collection("products").document(res.id)
+                                .update("change", currentDate)
+                            db.collection("products").document(res.id)
+                                .update("who_changed", sp.getString("fullName",
+                                    "Произошла непредвиденная ошибка"))
 
-                if (place[0] == 's')
-                    addChange(name, sp.getString("fullName", "Ошибка").toString(),
-                        "add_s", currentDate.toString(), binding.count.text.toString())
-                else {
-                    val serNum = documentReference.id
-                    addChange(name, sp.getString("fullName", "Ошибка").toString(),
-                        "add_r_${reason}_${serNum + "0"}", currentDate.toString(), binding.count.text.toString())
+                            if (place[0] == 's')
+                                Toast.makeText(this@MoveTheProductActivity,
+                                    "Товар перемещен на склад", Toast.LENGTH_SHORT).show()
+                            else if (place[0] == 'r')
+                                Toast.makeText(this@MoveTheProductActivity,
+                                    "Товар перемещен в ремонт", Toast.LENGTH_SHORT).show()
+                            else
+                                Toast.makeText(this@MoveTheProductActivity,
+                                    "Товар был выдан", Toast.LENGTH_SHORT).show()
 
-                    db.collection("products").document(serNum).update("number", serNum + "0")
+                            startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
+
+                            break
+                        }
+                    }
+
+                    if (!flag) {
+                        db.collection("products")
+                            .add(product)
+                            .addOnSuccessListener { documentReference ->
+                                if (place[0] == 's')
+                                    Toast.makeText(
+                                        this@MoveTheProductActivity,
+                                        "Товар перемещен на склад", Toast.LENGTH_SHORT
+                                    ).show()
+                                else
+                                    Toast.makeText(
+                                        this@MoveTheProductActivity,
+                                        "Товар перемещен в ремонт", Toast.LENGTH_SHORT
+                                    ).show()
+
+                                if (place[0] == 's')
+                                    addChange(
+                                        name, sp.getString("fullName", "Ошибка").toString(),
+                                        "add_s", currentDate.toString(), binding.count.text.toString()
+                                    )
+                                else {
+                                    val serNum = documentReference.id
+                                    addChange(
+                                        name,
+                                        sp.getString("fullName", "Ошибка").toString(),
+                                        "add_r_${reason}_${serNum + "0"}",
+                                        currentDate.toString(),
+                                        binding.count.text.toString()
+                                    )
+
+                                    if (place[0] == 's')
+                                        Toast.makeText(this@MoveTheProductActivity,
+                                            "Товар перемещен на склад", Toast.LENGTH_SHORT).show()
+                                    else if (place[0] == 'r')
+                                        Toast.makeText(this@MoveTheProductActivity,
+                                            "Товар перемещен в ремонт", Toast.LENGTH_SHORT).show()
+                                    else
+                                        Toast.makeText(this@MoveTheProductActivity,
+                                            "Товар был выдан", Toast.LENGTH_SHORT).show()
+
+                                    db.collection("products").document(serNum).update("number", serNum + "0")
+                                }
+
+                                startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    this@MoveTheProductActivity,
+                                    "Не получилось, попробуйте позже",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
                 }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this@MoveTheProductActivity,
+                        "Не получилось, попробуйте позже",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+        else {
+            db.collection("products")
+                .add(product)
+                .addOnSuccessListener { documentReference ->
+                    if (place[0] == 's')
+                        Toast.makeText(
+                            this@MoveTheProductActivity,
+                            "Товар перемещен на склад", Toast.LENGTH_SHORT
+                        ).show()
+                    else
+                        Toast.makeText(
+                            this@MoveTheProductActivity,
+                            "Товар перемещен в ремонт", Toast.LENGTH_SHORT
+                        ).show()
 
-                startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(
-                    this@MoveTheProductActivity,
-                    "Не получилось, попробуйте позже",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+                    if (place[0] == 's')
+                        addChange(
+                            name, sp.getString("fullName", "Ошибка").toString(),
+                            "add_s", currentDate.toString(), binding.count.text.toString()
+                        )
+                    else {
+                        val serNum = documentReference.id
+                        addChange(
+                            name,
+                            sp.getString("fullName", "Ошибка").toString(),
+                            "add_r_${reason}_${serNum + "0"}",
+                            currentDate.toString(),
+                            binding.count.text.toString()
+                        )
+
+                        db.collection("products").document(serNum).update("number", serNum + "0")
+                    }
+
+                    if (place[0] == 's')
+                        Toast.makeText(this@MoveTheProductActivity,
+                            "Товар перемещен на склад", Toast.LENGTH_SHORT).show()
+                    else if (place[0] == 'r')
+                        Toast.makeText(this@MoveTheProductActivity,
+                            "Товар перемещен в ремонт", Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(this@MoveTheProductActivity,
+                            "Товар был выдан", Toast.LENGTH_SHORT).show()
+
+                    startActivity(Intent(this@MoveTheProductActivity, MainMenuActivity::class.java))
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this@MoveTheProductActivity,
+                        "Не получилось, попробуйте позже",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
     }
 
     fun moveProduct(name : String, place : String, reason : String?) {
@@ -376,20 +509,20 @@ class MoveTheProductActivity : AppCompatActivity() {
             }
     }
 
-    private fun changeDate(id : String, quantity : String) {
+    private fun changeDate(idChange : String, quantity : String) {
         // изменить дату и человека, количество, если надо - удалить
 
         if (quantity.toInt() == binding.count.text.toString().toInt())
-            db.collection("products").document(id).delete()
+            db.collection("products").document(idChange).delete()
         else {
             val currentDate = SimpleDateFormat("dd.M.yyyy/HH:mm:ss", Locale("ru")).format(Date()).toString()
             val sp = getSharedPreferences("email and password", MODE_PRIVATE)
 
-            db.collection("products").document(id)
+            db.collection("products").document(idChange)
                 .update("quantity", quantity.toInt() - binding.count.text.toString().toInt())
-            db.collection("products").document(id)
+            db.collection("products").document(idChange)
                 .update("change", currentDate)
-            db.collection("products").document(id)
+            db.collection("products").document(idChange)
                 .update("who_changed", sp.getString("fullName",
                     "Произошла непредвиденная ошибка"))
         }
